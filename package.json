@@ -1,0 +1,29 @@
+{
+  "name": "quanta-grafana-alloy",
+  "version": "1.0.0",
+  "description": "Grafana Alloy log monitoring stack for Quanta application - standalone project",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "./start.sh",
+    "stop": "./stop.sh",
+    "restart": "./restart.sh",
+    "restart:complete": "./restart.sh --complete",
+    "init": "./init-data-folders.sh"
+  },
+  "keywords": [
+    "grafana",
+    "alloy",
+    "loki",
+    "logging",
+    "monitoring",
+    "observability"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
