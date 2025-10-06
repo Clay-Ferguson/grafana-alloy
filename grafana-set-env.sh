@@ -20,11 +20,11 @@
 
 # Where to read application log files from (absolute path required)
 # Example: /path/to/your/app/logs
-export GRAFANA_LOGS_SOURCE_DIR="${GRAFANA_LOGS_SOURCE_DIR:-/home/clay/ferguson/quanta/dist/server/logs}"
+export GRAFANA_LOGS_SOURCE_DIR="${GRAFANA_LOGS_SOURCE_DIR}"
 
 # Where to store Grafana, Loki, and Alloy persistent data (absolute path required)
 # Example: /var/lib/grafana-data or ~/grafana-data
-export GRAFANA_DB_BASE_DIR="${GRAFANA_DB_BASE_DIR:-/home/clay/ferguson/grafana-data/dev/database}"
+export GRAFANA_DB_BASE_DIR="${GRAFANA_DB_BASE_DIR}"
 
 # ==============================================================================
 # Derived directory paths (automatically set based on GRAFANA_DB_BASE_DIR)
@@ -55,9 +55,50 @@ export ALLOY_OTLP_PORT="${ALLOY_OTLP_PORT:-4318}"     # Alloy OTLP receiver
 # export GRAFANA_ALLOY_VERSION="v1.10.0"
 
 # ==============================================================================
-# Validation (optional but recommended)
+# Validation (required)
 # ==============================================================================
-if [ ! -d "$GRAFANA_LOGS_SOURCE_DIR" ]; then
-    echo "⚠️  Warning: GRAFANA_LOGS_SOURCE_DIR does not exist: $GRAFANA_LOGS_SOURCE_DIR"
-    echo "   Grafana Alloy will not be able to read logs until this directory is created."
+
+# Check if GRAFANA_LOGS_SOURCE_DIR is set and exists
+if [ -z "$GRAFANA_LOGS_SOURCE_DIR" ]; then
+    echo "❌ Error: GRAFANA_LOGS_SOURCE_DIR environment variable is not set."
+    echo "   Please set it to the absolute path of your application's log directory."
+    echo "   Example: export GRAFANA_LOGS_SOURCE_DIR=/path/to/your/app/logs"
+    echo
+    echo "Press any key to exit..."
+    read -n 1
+    exit 1
 fi
+
+if [ ! -d "$GRAFANA_LOGS_SOURCE_DIR" ]; then
+    echo "❌ Error: GRAFANA_LOGS_SOURCE_DIR directory does not exist: $GRAFANA_LOGS_SOURCE_DIR"
+    echo "   Please create this directory or set GRAFANA_LOGS_SOURCE_DIR to an existing directory."
+    echo
+    echo "Press any key to exit..."
+    read -n 1
+    exit 1
+fi
+
+# Check if GRAFANA_DB_BASE_DIR is set and exists
+if [ -z "$GRAFANA_DB_BASE_DIR" ]; then
+    echo "❌ Error: GRAFANA_DB_BASE_DIR environment variable is not set."
+    echo "   Please set it to the absolute path where you want to store Grafana data."
+    echo "   Example: export GRAFANA_DB_BASE_DIR=/var/lib/grafana-data"
+    echo
+    echo "Press any key to exit..."
+    read -n 1
+    exit 1
+fi
+
+if [ ! -d "$GRAFANA_DB_BASE_DIR" ]; then
+    echo "❌ Error: GRAFANA_DB_BASE_DIR directory does not exist: $GRAFANA_DB_BASE_DIR"
+    echo "   Please create this directory or set GRAFANA_DB_BASE_DIR to an existing directory."
+    echo
+    echo "Press any key to exit..."
+    read -n 1
+    exit 1
+fi
+
+# If we reach here, both directories are valid
+echo "✅ Environment validation passed:"
+echo "   GRAFANA_LOGS_SOURCE_DIR: $GRAFANA_LOGS_SOURCE_DIR"
+echo "   GRAFANA_DB_BASE_DIR: $GRAFANA_DB_BASE_DIR"

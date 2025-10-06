@@ -22,12 +22,9 @@ This setup uses Grafana Alloy to collect logs from any directory containing JSON
 ### Installation
 
 1. **Clone or copy this directory** to your preferred location
-2. **Configure the environment** by editing `grafana-set-env.sh`:
+2. **Set required environment variables**:
    ```bash
-   # Point to your application's log directory
    export GRAFANA_LOGS_SOURCE_DIR="/path/to/your/app/logs"
-   
-   # Set where to store Grafana data
    export GRAFANA_DB_BASE_DIR="/path/to/grafana-data"
    ```
 3. **Start the stack**:
@@ -35,19 +32,39 @@ This setup uses Grafana Alloy to collect logs from any directory containing JSON
    ./start.sh
    ```
 
+   Or set variables inline:
+   ```bash
+   GRAFANA_LOGS_SOURCE_DIR="/path/to/your/app/logs" \
+   GRAFANA_DB_BASE_DIR="/path/to/grafana-data" \
+   ./start.sh
+   ```
+
 That's it! Access Grafana at `http://localhost:3000`
 
 ## Configuration Requirements
 
-Before running, you must configure where your application logs are located. Edit `grafana-set-env.sh`:
+Before running, you must set the required environment variables. You have two options:
 
+**Option 1: Set environment variables directly**
 ```bash
-# REQUIRED: Point this to your application's log directory (absolute path)
 export GRAFANA_LOGS_SOURCE_DIR="/path/to/your/application/logs"
+export GRAFANA_DB_BASE_DIR="/home/yourusername/grafana-data"
+./start.sh
+```
 
-# REQUIRED: Where to store persistent Grafana/Loki data (absolute path)  
+**Option 2: Edit `grafana-set-env.sh` and source it**
+```bash
+# Edit grafana-set-env.sh to set:
+export GRAFANA_LOGS_SOURCE_DIR="/path/to/your/application/logs"
 export GRAFANA_DB_BASE_DIR="/home/yourusername/grafana-data"
 
+# Then source and run:
+source ./grafana-set-env.sh
+./start.sh
+```
+
+**Additional optional configurations in `grafana-set-env.sh`:**
+```bash
 # OPTIONAL: Environment identifier (useful for running multiple instances)
 export GRAFANA_ENV_SUFFIX="dev"  # or "prod", "test", etc.
 
@@ -173,13 +190,29 @@ This monitoring stack expects **structured JSON logs**. Each log entry should be
 ## Usage
 
 ### Starting the Stack
+
+You must set the required environment variables before starting:
+
 ```bash
+# Option 1: Set variables inline
+GRAFANA_LOGS_SOURCE_DIR="/path/to/logs" GRAFANA_DB_BASE_DIR="/path/to/data" ./start.sh
+
+# Option 2: Export variables first
+export GRAFANA_LOGS_SOURCE_DIR="/path/to/logs"
+export GRAFANA_DB_BASE_DIR="/path/to/data"
+./start.sh
+
+# Option 3: Source the config file (if you've edited it)
+source ./grafana-set-env.sh
 ./start.sh
 ```
-- Automatically creates required data directories
-- Checks if containers are already running (idempotent)
-- Starts only if needed
-- Provides status feedback and URLs
+
+The script will:
+- Validate that both directories exist
+- Automatically create required data directories
+- Check if containers are already running (idempotent)
+- Start only if needed
+- Provide status feedback and URLs
 
 ### Stopping the Stack
 ```bash
@@ -214,19 +247,25 @@ After starting, access the web interfaces:
 To run multiple monitoring stacks simultaneously (e.g., for dev and prod):
 
 1. Create separate copies of this directory
-2. Edit `grafana-set-env.sh` in each copy:
+2. Edit `grafana-set-env.sh` in each copy to set the required variables:
    ```bash
    # Instance 1 (dev)
-   export GRAFANA_ENV_SUFFIX="dev"
-   export GRAFANA_PORT="3000"
-   export GRAFANA_LOGS_SOURCE_DIR="/path/to/dev/logs"
+   export GRAFANA_LOGS_SOURCE_DIR="/path/to/dev/logs"      # REQUIRED
+   export GRAFANA_DB_BASE_DIR="/path/to/dev/data"          # REQUIRED
+   export GRAFANA_ENV_SUFFIX="dev"                         # Optional
+   export GRAFANA_PORT="3000"                              # Optional
    
    # Instance 2 (prod)  
-   export GRAFANA_ENV_SUFFIX="prod"
-   export GRAFANA_PORT="3001"  # Different port!
-   export GRAFANA_LOGS_SOURCE_DIR="/path/to/prod/logs"
+   export GRAFANA_LOGS_SOURCE_DIR="/path/to/prod/logs"     # REQUIRED
+   export GRAFANA_DB_BASE_DIR="/path/to/prod/data"         # REQUIRED
+   export GRAFANA_ENV_SUFFIX="prod"                        # Optional
+   export GRAFANA_PORT="3001"                              # Different port!
    ```
-3. Start each instance with `./start.sh`
+3. Start each instance:
+   ```bash
+   source ./grafana-set-env.sh
+   ./start.sh
+   ```
 
 ## File Structure
 
