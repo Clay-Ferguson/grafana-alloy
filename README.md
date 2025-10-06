@@ -1,6 +1,6 @@
 # Grafana Alloy Log Monitoring - Standalone Project
 
-This is a **standalone project** containing a Grafana Alloy monitoring stack for analyzing JSON-formatted application logs.
+This is a **standalone project** containing a Grafana Alloy log analysis stack for analyzing JSON-formatted application logs. This logging configuration was created to analyze logs created the [Quanta Project](https://github.com/Clay-Ferguson/quanta), but is not tied to Quanta actually, and can be used to analyze any JSON logs.
 
 ## Overview
 
